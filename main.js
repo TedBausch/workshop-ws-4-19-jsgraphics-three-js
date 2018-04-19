@@ -40,9 +40,25 @@ container.appendChild(renderer.domElement)
 
 var loader = new THREE.TextureLoader()
 
+// adding background with a separate scene, based on tutorial at https://stackoverflow.com/questions/19865537/three-js-set-background-image?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+// Load the background texture
+var texture = THREE.ImageUtils.loadTexture('images\\kc.jpeg');
+var backgroundMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(2, 2, 0),
+    new THREE.MeshBasicMaterial({
+        map: texture
+    }));
 
+backgroundMesh.material.depthTest = false;
+backgroundMesh.material.depthWrite = false;
 
-loader.load('https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57735/land_ocean_ice_cloud_2048.jpg', function ( texture ) {
+// create background scene and camera
+var backgroundScene = new THREE.Scene();
+var backgroundCamera = new THREE.Camera();
+backgroundScene.add(backgroundCamera);
+backgroundScene.add(backgroundMesh);
+
+loader.load('images\\kc.jpeg', function ( texture ) {
     //create the sphere
     var sphere = new THREE.SphereGeometry( RADIUS, SEGMENTS, RINGS )
 
@@ -61,6 +77,7 @@ globe.position.z = -300
 function update () {
 
   //Render:
+  renderer.render(backgroundScene, backgroundCamera);
   renderer.render(scene, camera)
 
   // Schedule the next frame:
